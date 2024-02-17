@@ -10,52 +10,29 @@ This section describes knowing both files, contents, size, file type and clearly
 
 ```
 $ cd assignments
-```
 
-```
 $ ls -l
-```
 
-```
 $ du -h fang_et_al_genotypes.txt snp_position.txt
-```
 
-```
 $ file fang_et_al_genotypes.txt snp_position.txt
-```
 
-```
 $  wc snp_position.txt fang_et_al_genotypes.txt
-```
 
-```
 $ file fang_et_al_genotypes.txt snp_position.txt
-```
 
-```
 $  wc fang_et_al_genotypes.txt snp_position.txt
 
-```
 $  head fang_et_al_genotypes.txt snp_position.txt
-```
 
-```
 $ head -n 1 fang_et_al_genotypes.txt snp_position.txt
-```
 
-```
 $ grep -v "^#" fang_et_al_genotypes.txt | awk -F "\t" '{print NF; exit}' fang_et_al_genotypes.txt
-```
 
-```
 $ grep -v "^#" snp_position.txt | awk -F "\t" '{print NF; exit}' snp_position.txt
-```
 
-```
 $ tail -n +2 snp_position.txt | cut -f1-2 | column -t
-```
 
-```
 $ cut -f 3 fang_et_al_genotypes.txt |sort| uniq -c
 ```
 
@@ -69,125 +46,68 @@ This section describes how both files were processed to achieve a single file fo
 
 ### **File Processing of fang_et_al_genotype.txt and snp_position.txt  with the codes below**
 
+
 ### **For Maize**
 
 ```
 $ grep -E "(Group|ZMMIL|ZMMLR|ZMMMR)" fang_et_al_genotypes.txt | cut --complement -f 2-3 > tempo_maize_genotypes.txt
-```
 
-```
 $ awk -f transpose.awk tempo_maize_genotypes.txt > tempo_transposed_maize_genotypes.txt
-```
 
-```
 $ cut -f 1,3,4 snp_position.txt > tempo_position.txt
-```
 
-```
 $ head  tempo_positions.txt | column -t 
-```
 
-```
 $ grep -v "^SNP_ID" tempo_position.txt | sort -k1,1 > tempo_sorted_position.txt
-```
 
-```
 $ head tempo_sorted_position.txt
-```
 
-```
 $ grep -v "^Sample" tempo_transposed_maize_genotypes.txt | sort -k1,1 > tempo_sorted_maize_genotypes.txt
-```
 
-```
 $ head -n 1 tempo_transposed_maize_genotypes.txt > tempo_maize_header.txt
-```
 
-```
 $ head -n 1 tempo_positions.txt > tempo_position_header.txt
-```
 
-```
 $ awk -F "\t" '{print NF; exit}' tempo_maize_header.txt
-```
 
-```
 $ awk -F "\t" '{print NF; exit}' tempo_position_header.txt
-```
 
-```
 $ cat tempo_maize_header.txt tempo_sorted_maize_genotypes.txt > temp_sorted_maize_all_complete.txt
-```
 
-```
 $ awk -F "\t" '{print NF; exit}' tempo_position_header.txt
-```
 
-```
 $ awk -F "\t" '{print NF; exit}' tempo_sorted_position.txt
-```
 
-```
 $ cat tempo_position_header.txt tempo_sorted_position.txt > tempo_sorted_positions_all_complete.txt
-```
 
-```
 $ awk -F "\t" '{print NF; exit}' tempo_sorted_positions_all_complete.txt
-```
 
-```
 $ wc -l tempo_sorted_positions_all_complete.txt
-```
 
-```
 $ awk -F "\t" '{print NF; exit}' tempo_sorted_positions_all_complete.txt
-```
 
-```
 $ wc -l tempo_sorted_maize_all_complete.txt
-```
 
-```
 $ awk -F "\t" '{print NF; exit}' tempo_sorted_maize_all_complete.txt
-```
 
-```
 $ join -1 1 -2 1 -t $'\t' --header tempo_sorted_positions_all_complete.txt tempo_sorted_maize_all_complete.txt > tempo_merged_maize_all_complete.txt
-```
 
-```
 $ grep -E '(Chromosome|unknown)' tempo_merged_maize_all_complete.txt | head -n 2
-```
 
-```
 $ grep -E '(Chromosome|unknown)' tempo_merged_maize_all_complete.txt > maize_unknown_snps_positions.txt
-```
 
-```
 $ grep -E '(Chromosome|multiple)' tempo_merged_maize_all_complete.txt > maize_multiple_snps_positions.txt
-```
 
-```
 $ grep -v -E "(unknown|multiple)" tempo_merged_maize_all_complete.txt > tempo_merged_maize_chromosomes.txt
-```
 
-```
 $ head -n 1 tempo_merged_maize_chromosomes.txt > tempo_headers_merged_maize.txt
-```
 
-```
 $ sed 's/\?\/\?/\?/g' tempo_merged_maize_chromosomes.txt | sort -k2,2n -k3,3n | awk -F '\t' '{print $0 > "tempo_maize_increasing_chr_"$2".txt"}'
-```
 
-```
 $ for i in $(seq 1 10); do cat tempo_headers_merged_maize.txt tempo_maize_increasing_chr_$i.txt > "maize_increasing_chr_${i}.txt"; done
-```
 
-```
 $ sed 's/?\/?/-/g' tempo_merged_maize_chromosomes.txt | sort -k2,2n -k3,3nr | awk -F '\t' '{print $0 > "tempo_maize_decreasing_chr_"$2".txt"}'
-```
 
-```
 $ for i in $(seq 1 10); do cat tempo_headers_merged_maize.txt tempo_maize_decreasing_chr_$i.txt > "maize_decreasing_chr_"$i".txt"; done
 ```
 
