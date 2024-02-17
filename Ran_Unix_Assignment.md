@@ -8,50 +8,60 @@ This section describes knowing both files, contents, size, file type and clearly
 
 ### **Inspection of fang_et_al_genotype.txt and snp_position.txt  with the codes below**
 
-'''{bash}
+```
+$ cd assignments
+```
 
-cd assignments
+```
+$ ls -l
+```
 
-ls -l
+```
+$ du -h fang_et_al_genotypes.txt snp_position.txt
+```
 
+```
+$ file fang_et_al_genotypes.txt snp_position.txt
+```
 
-du -h fang_et_al_genotypes.txt snp_position.txt
+```
+$  wc snp_position.txt fang_et_al_genotypes.txt
+```
 
-
-file fang_et_al_genotypes.txt snp_position.txt
-
-
-wc snp_position.txt fang_et_al_genotypes.txt
-
-
-file fang_et_al_genotypes.txt snp_position.txt
-
-
-wc fang_et_al_genotypes.txt snp_position.txt
-
-
-head fang_et_al_genotypes.txt snp_position.txt
-
-
-head -n 1 fang_et_al_genotypes.txt snp_position.txt
-
-
-grep -v "^#" fang_et_al_genotypes.txt | awk -F "\t" '{print NF; exit}' fang_et_al_genotypes.txt
-
-
-grep -v "^#" snp_position.txt | awk -F "\t" '{print NF; exit}' snp_position.txt
-
-
-tail -n +2 snp_position.txt | cut -f1-2 | column -t
-
-
-cut -f 3 fang_et_al_genotypes.txt |sort| uniq -c
-
-
+```
+$ file fang_et_al_genotypes.txt snp_position.txt
 '''
 
+```
+$  wc fang_et_al_genotypes.txt snp_position.txt
+
+```
+$  head fang_et_al_genotypes.txt snp_position.txt
+```
+
+```
+$ head -n 1 fang_et_al_genotypes.txt snp_position.txt
+```
+
+```
+$ grep -v "^#" fang_et_al_genotypes.txt | awk -F "\t" '{print NF; exit}' fang_et_al_genotypes.txt
+```
+
+```
+$ grep -v "^#" snp_position.txt | awk -F "\t" '{print NF; exit}' snp_position.txt
+```
+
+```
+$ tail -n +2 snp_position.txt | cut -f1-2 | column -t
+```
+
+```
+$ cut -f 3 fang_et_al_genotypes.txt |sort| uniq -c
+```
+
 ### **Results of inspecting both files**
-following the order of the codes, I changed directory to access the files names fang_et_al_genotype and snp_position.txt. The fang_et_al_genotypes.txt and snp_position.txt files are 6.7M and 49K in size respectively. Also both files are ASCII text files with the fang_et_al_genotype have very long lines. With the 'wc' command on the files, fang_et_al_genotype.txt was known to have 2783 lines, 2744038 words and 11051939 bits of characters while the snp_position.txt file was seen to have 984 lines, 113198 words and 82763 bits of characters. The head commands used helped understand that all files had line as headers but the headers were not iniated by the "harsh symbol". The fang_et_al_genotype.txt and snp_position.txt files had 986 and 15 columns respectively. For snp_position.txt, the file was found to be not well sorted using the 'tail -n +2' command to inspect from line 2 to the end by observing the first and second columns. The last code for the inspection helped understand the number of lines a specific group of maize ccured in the fang_et_al_genotype.txt file. 
+
+Following the order of the codes, I changed directory to access the files names fang_et_al_genotype and snp_position.txt. The fang_et_al_genotypes.txt and snp_position.txt files are 6.7M and 49K in size respectively. Also both files are ASCII text files with the fang_et_al_genotype have very long lines. With the 'wc' command on the files, fang_et_al_genotype.txt was known to have 2783 lines, 2744038 words and 11051939 bits of characters while the snp_position.txt file was seen to have 984 lines, 113198 words and 82763 bits of characters. The head commands used helped understand that all files had line as headers but the headers were not iniated by the "harsh symbol". The fang_et_al_genotype.txt and snp_position.txt files had 986 and 15 columns respectively. For snp_position.txt, the file was found to be not well sorted using the 'tail -n +2' command to inspect from line 2 to the end by observing the first and second columns. The last code for the inspection helped understand the number of lines a specific group of maize ccured in the fang_et_al_genotype.txt file. 
 
 
 ## **File processing**
@@ -61,86 +71,128 @@ This section describes how both files were processed to achieve a single file fo
 
 ### **For Maize**
 
-'''{bash}
+```
+$ grep -E "(Group|ZMMIL|ZMMLR|ZMMMR)" fang_et_al_genotypes.txt | cut --complement -f 2-3 > tempo_maize_genotypes.txt
+```
 
-grep -E "(Group|ZMMIL|ZMMLR|ZMMMR)" fang_et_al_genotypes.txt | cut --complement -f 2-3 > tempo_maize_genotypes.txt
+```
+$ awk -f transpose.awk tempo_maize_genotypes.txt > tempo_transposed_maize_genotypes.txt
+```
 
+```
+$ cut -f 1,3,4 snp_position.txt > tempo_position.txt
+```
 
-awk -f transpose.awk tempo_maize_genotypes.txt > tempo_transposed_maize_genotypes.txt
+```
+$ head  tempo_positions.txt | column -t 
+```
 
+```
+$ grep -v "^SNP_ID" tempo_position.txt | sort -k1,1 > tempo_sorted_position.txt
+```
 
-cut -f 1,3,4 snp_position.txt > tempo_position.txt
+```
+$ head tempo_sorted_position.txt
+```
 
-head  tempo_positions.txt | column -t 
-
-grep -v "^SNP_ID" tempo_position.txt | sort -k1,1 > tempo_sorted_position.txt
-
-head tempo_sorted_position.txt
-
+```
 $ grep -v "^Sample" tempo_transposed_maize_genotypes.txt | sort -k1,1 > tempo_sorted_maize_genotypes.txt
+```
+
+```
+$ head -n 1 tempo_transposed_maize_genotypes.txt > tempo_maize_header.txt
+```
+
+```
+$ head -n 1 tempo_positions.txt > tempo_position_header.txt
+```
+
+```
+$ awk -F "\t" '{print NF; exit}' tempo_maize_header.txt
+```
+
+```
+$ awk -F "\t" '{print NF; exit}' tempo_position_header.txt
+```
+
+```
+$ cat tempo_maize_header.txt tempo_sorted_maize_genotypes.txt > temp_sorted_maize_all_complete.txt
+```
+
+```
+$ awk -F "\t" '{print NF; exit}' tempo_position_header.txt
+```
+
+```
+$ awk -F "\t" '{print NF; exit}' tempo_sorted_position.txt
+```
+
+```
+$ cat tempo_position_header.txt tempo_sorted_position.txt > tempo_sorted_positions_all_complete.txt
+```
+
+```
+$ awk -F "\t" '{print NF; exit}' tempo_sorted_positions_all_complete.txt
+```
+
+```
+$ wc -l tempo_sorted_positions_all_complete.txt
+```
+
+```
+$ awk -F "\t" '{print NF; exit}' tempo_sorted_positions_all_complete.txt
+```
+
+```
+$ wc -l tempo_sorted_maize_all_complete.txt
+```
+
+```
+$ awk -F "\t" '{print NF; exit}' tempo_sorted_maize_all_complete.txt
+```
+
+```
+$ join -1 1 -2 1 -t $'\t' --header tempo_sorted_positions_all_complete.txt tempo_sorted_maize_all_complete.txt > tempo_merged_maize_all_complete.txt
+```
+
+```
+$ grep -E '(Chromosome|unknown)' tempo_merged_maize_all_complete.txt | head -n 2
+```
+
+```
+$ grep -E '(Chromosome|unknown)' tempo_merged_maize_all_complete.txt > maize_unknown_snps_positions.txt
+```
+
+```
+$ grep -E '(Chromosome|multiple)' tempo_merged_maize_all_complete.txt > maize_multiple_snps_positions.txt
+```
+
+```
+$ grep -v -E "(unknown|multiple)" tempo_merged_maize_all_complete.txt > tempo_merged_maize_chromosomes.txt
+```
+
+```
+$ head -n 1 tempo_merged_maize_chromosomes.txt > tempo_headers_merged_maize.txt
+```
+
+```
+$ sed 's/\?\/\?/\?/g' tempo_merged_maize_chromosomes.txt | sort -k2,2n -k3,3n | awk -F '\t' '{print $0 > "tempo_maize_increasing_chr_"$2".txt"}'
+```
+
+```
+$ for i in $(seq 1 10); do cat tempo_headers_merged_maize.txt tempo_maize_increasing_chr_$i.txt > "maize_increasing_chr_${i}.txt"; done
+```
+
+```
+$ sed 's/?\/?/-/g' tempo_merged_maize_chromosomes.txt | sort -k2,2n -k3,3nr | awk -F '\t' '{print $0 > "tempo_maize_decreasing_chr_"$2".txt"}'
+```
+
+```
+$ for i in $(seq 1 10); do cat tempo_headers_merged_maize.txt tempo_maize_decreasing_chr_$i.txt > "maize_decreasing_chr_"$i".txt"; done
+```
 
 
-head -n 1 tempo_transposed_maize_genotypes.txt > tempo_maize_header.txt
-
-head -n 1 tempo_positions.txt > tempo_position_header.txt
-
-
-awk -F "\t" '{print NF; exit}' tempo_maize_header.txt
-
-
-awk -F "\t" '{print NF; exit}' tempo_position_header.txt
-
-
-cat tempo_maize_header.txt tempo_sorted_maize_genotypes.txt > temp_sorted_maize_all_complete.txt
-
-
-awk -F "\t" '{print NF; exit}' tempo_position_header.txt
-
-
-awk -F "\t" '{print NF; exit}' tempo_sorted_position.txt
-
-
-cat tempo_position_header.txt tempo_sorted_position.txt > tempo_sorted_positions_all_complete.txt
-
-awk -F "\t" '{print NF; exit}' tempo_sorted_positions_all_complete.txt
-
-wc -l tempo_sorted_positions_all_complete.txt
-
-
-awk -F "\t" '{print NF; exit}' tempo_sorted_positions_all_complete.txt
-
-
-wc -l tempo_sorted_maize_all_complete.txt
-
-
-awk -F "\t" '{print NF; exit}' tempo_sorted_maize_all_complete.txt
-
-
-join -1 1 -2 1 -t $'\t' --header tempo_sorted_positions_all_complete.txt tempo_sorted_maize_all_complete.txt > tempo_merged_maize_all_complete.txt
-
-grep -E '(Chromosome|unknown)' tempo_merged_maize_all_complete.txt | head -n 2
-
-grep -E '(Chromosome|unknown)' tempo_merged_maize_all_complete.txt > maize_unknown_snps_positions.txt
-
-grep -E '(Chromosome|multiple)' tempo_merged_maize_all_complete.txt > maize_multiple_snps_positions.txt
-
-grep -v -E "(unknown|multiple)" tempo_merged_maize_all_complete.txt > tempo_merged_maize_chromosomes.txt
-
-head -n 1 tempo_merged_maize_chromosomes.txt > tempo_headers_merged_maize.txt
-
-sed 's/\?\/\?/\?/g' tempo_merged_maize_chromosomes.txt | sort -k2,2n -k3,3n | awk -F '\t' '{print $0 > "tempo_maize_increasing_chr_"$2".txt"}'
-
-for i in $(seq 1 10); do cat tempo_headers_merged_maize.txt tempo_maize_increasing_chr_$i.txt > "maize_increasing_chr_${i}.txt"; done
-
-sed 's/?\/?/-/g' tempo_merged_maize_chromosomes.txt | sort -k2,2n -k3,3nr | awk -F '\t' '{print $0 > "tempo_maize_decreasing_chr_"$2".txt"}'
-
-
-for i in $(seq 1 10); do cat tempo_headers_merged_maize.txt tempo_maize_decreasing_chr_$i.txt > "maize_decreasing_chr_"$i".txt"; done
-
-''''
-
-
-### **Results of inspecting both files for Maize groups**
+### **Results of Processing both files for Maize groups**
 
 1. Creation of a tempo_maize_genotypes.txt from fang_et_al_genotypes.txt by using the grep command line, piped with the cut column option. The tempo_maize_genotypes.txt was then transposed to create tempo_transposed_maize_genotype.txt
 
@@ -203,78 +255,97 @@ for i in $(seq 1 10); do cat tempo_headers_merged_maize.txt tempo_maize_decreasi
 
 ### **For Teosinte**
 
-'''{bash}
+```
+$ grep -E "(Group|ZMPBA|ZMPIL|ZMPJA)" fang_et_al_genotypes.txt | cut --complement -f 2-3 > tempo_teosinte_genotypes.txt
+```
 
+```
+$ awk -f transpose.awk tempo_teosinte_genotypes.txt > tempo_transposed_teosinte_genotypes.txt
+```
 
-grep -E "(Group|ZMPBA|ZMPIL|ZMPJA)" fang_et_al_genotypes.txt | cut --complement -f 2-3 > tempo_teosinte_genotypes.txt
-
-awk -f transpose.awk tempo_teosinte_genotypes.txt > tempo_transposed_teosinte_genotypes.txt
-
-
+```
 $ grep -v "^Sample" tempo_transposed_teosinte_genotypes.txt | sort -k1,1 > tempo_sorted_teosinte_genotypes.txt
+```
 
+```
+$ head -n 1 tempo_transposed_teosinte_genotypes.txt > tempo_teosinte_header.txt
+```
 
-head -n 1 tempo_transposed_teosinte_genotypes.txt > tempo_teosinte_header.txt
+```
+$ awk -F "\t" '{print NF; exit}' tempo_teosinte_header.txt
+```
 
+```
+$ awk -F "\t" '{print NF; exit}' tempo_position_header.txt
+```
 
-awk -F "\t" '{print NF; exit}' tempo_teosinte_header.txt
+```
+$ cat tempo_teosinte_header.txt tempo_sorted_teosinte_genotypes.txt > tempo_sorted_teosinte_all_complete.txt
+```
 
+```
+$ awk -F "\t" '{print NF; exit}' tempo_position_header.txt
+```
 
-awk -F "\t" '{print NF; exit}' tempo_position_header.txt
+```
+$ awk -F "\t" '{print NF; exit}' tempo_sorted_position.txt
+```
 
+```
+$ wc -l tempo_sorted_positions_all_complete.txt
+```
 
-cat tempo_teosinte_header.txt tempo_sorted_teosinte_genotypes.txt > tempo_sorted_teosinte_all_complete.txt
+```
+$ wc -l tempo_sorted_teosinte_all_complete.txt
+```
 
+```
+$ awk -F "\t" '{print NF; exit}' tempo_sorted_positions_all_complete.txt
+```
 
-awk -F "\t" '{print NF; exit}' tempo_position_header.txt
+```
+$ awk -F "\t" '{print NF; exit}' tempo_sorted_teosinte_all_complete.txt
+```
 
+```
+$ join -1 1 -2 1 -t $'\t' --header tempo_sorted_positions_all_complete.txt tempo_sorted_teosinte_all_complete.txt > tempo_merged_teosinte_all_complete.txt
+```
 
-awk -F "\t" '{print NF; exit}' tempo_sorted_position.txt
+```
+$ grep -E '(Chromosome|unknown)' tempo_merged_teosinte_all_complete.txt | head -n 2
+```
 
+```
+$ grep -E '(Chromosome|unknown)' tempo_merged_teosinte_all_complete.txt > teosinte_unknown_snps_positions.txt
+```
 
-wc -l tempo_sorted_positions_all_complete.txt
+```
+$ grep -E '(Chromosome|multiple)' tempo_merged_teosinte_all_complete.txt > teosinte_multiple_snps_positions.txt
+```
 
+```
+$ grep -v -E "(unknown|multiple)" tempo_merged_teosinte_all_complete.txt > tempo_merged_teosinte_chromosomes.txt
+```
 
-wc -l tempo_sorted_teosinte_all_complete.txt
+```
+$ head -n 1 tempo_merged_teosinte_chromosomes.txt > tempo_headers_merged_teosinte.txt
+```
 
+```
+$ sed 's/\?\/\?/\?/g' tempo_merged_teosinte_chromosomes.txt | sort -k2,2n -k3,3n | awk -F '\t' '{print $0 > "tempo_teosinte_increasing_chr_"$2".txt"}'
+```
 
-awk -F "\t" '{print NF; exit}' tempo_sorted_positions_all_complete.txt
+```
+$ for i in $(seq 1 10); do cat tempo_headers_merged_teosinte.txt tempo_teosinte_increasing_chr_$i.txt > "teosinte_increasing_chr_${i}.txt"; done
+```
 
+```
+$ sed 's/?\/?/-/g' tempo_merged_teosinte_chromosomes.txt | sort -k2,2n -k3,3nr | awk -F '\t' '{print $0 > "tempo_teosinte_decreasing_chr_"$2".txt"}'
+```
 
-awk -F "\t" '{print NF; exit}' tempo_sorted_teosinte_all_complete.txt
-
-
-join -1 1 -2 1 -t $'\t' --header tempo_sorted_positions_all_complete.txt tempo_sorted_teosinte_all_complete.txt > tempo_merged_teosinte_all_complete.txt
-
-
-grep -E '(Chromosome|unknown)' tempo_merged_teosinte_all_complete.txt | head -n 2
-
-
-grep -E '(Chromosome|unknown)' tempo_merged_teosinte_all_complete.txt > teosinte_unknown_snps_positions.txt
-
-
-grep -E '(Chromosome|multiple)' tempo_merged_teosinte_all_complete.txt > teosinte_multiple_snps_positions.txt
-
-
-grep -v -E "(unknown|multiple)" tempo_merged_teosinte_all_complete.txt > tempo_merged_teosinte_chromosomes.txt
-
-
-head -n 1 tempo_merged_teosinte_chromosomes.txt > tempo_headers_merged_teosinte.txt
-
-
-sed 's/\?\/\?/\?/g' tempo_merged_teosinte_chromosomes.txt | sort -k2,2n -k3,3n | awk -F '\t' '{print $0 > "tempo_teosinte_increasing_chr_"$2".txt"}'
-
-
-for i in $(seq 1 10); do cat tempo_headers_merged_teosinte.txt tempo_teosinte_increasing_chr_$i.txt > "teosinte_increasing_chr_${i}.txt"; done
-
-
-sed 's/?\/?/-/g' tempo_merged_teosinte_chromosomes.txt | sort -k2,2n -k3,3nr | awk -F '\t' '{print $0 > "tempo_teosinte_decreasing_chr_"$2".txt"}'
-
-
-for i in $(seq 1 10); do cat tempo_headers_merged_teosinte.txt tempo_teosinte_decreasing_chr_$i.txt > "teosinte_decreasing_chr_"$i".txt"; done
-
-
-''''
+```
+$ for i in $(seq 1 10); do cat tempo_headers_merged_teosinte.txt tempo_teosinte_decreasing_chr_$i.txt > "teosinte_decreasing_chr_"$i".txt"; done
+```
 
 
 ### **Results of inspecting both files for Teosinte groups**
