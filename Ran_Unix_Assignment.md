@@ -30,7 +30,7 @@ $  wc snp_position.txt fang_et_al_genotypes.txt
 
 ```
 $ file fang_et_al_genotypes.txt snp_position.txt
-'''
+```
 
 ```
 $  wc fang_et_al_genotypes.txt snp_position.txt
